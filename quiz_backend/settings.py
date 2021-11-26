@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-ef8!z8o1y*qp1)!hlq6a%jvia#r@q7mrv!goi16g(r0yugb7@^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['*']
+
 
 
 # Application definition
@@ -49,6 +52,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'quiz_backend.urls'

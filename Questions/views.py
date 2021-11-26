@@ -15,20 +15,26 @@ class RoundView(APIView):
         return Response(ser.data, status=status.HTTP_200_OK)
 
 class QuestionView(APIView):
+
     def get(self, request, *args, **kwargs):
         questions = Question.objects.all()
         ser = QuestionSerializer(questions, many=True)
         return Response(ser.data, status=status.HTTP_200_OK)
 
 class QuestionByRound(APIView):
+
     def get(self, request, *args, **kwargs):
         round_number = request.data.get('round_number')
+        print(round_number)
+        if round_number is None:
+            return Response({'error': 'expecting round number in request'}, status=status.HTTP_400_BAD_REQUEST)
         round_object = Round.objects.get(round_number=round_number)
-        questions = Question.objects.filter(belongs_to=round_number)
+        questions = Question.objects.filter(belongs_to=round_object)
         ser = QuestionSerializer(questions, many=True)
         return Response(ser.data, status=status.HTTP_200_OK)
 
 class AnswerByQuestionView(APIView):
+
     def get(self, request, *args, **kwargs):
         question_id = request.GET.get('question_id')
         question_object = Question.objects.get(id=question_id)
@@ -37,14 +43,16 @@ class AnswerByQuestionView(APIView):
         return Response(ser.data, status.HTTP_200_OK)
 
 class GenerateRandomTask(APIView):
+
     def get(self, request, *args, **kwargs):
         tasks = Task.objects.filter(used=False)
         if(len(tasks) == 0):
-            tasks = tasks.objects.all()
+            tasks = Task.objects.all()
             for task in tasks:
                 task.used = False
                 task.save()
-        index = random.randint(0, len(tasks))
+        tasks = Task.objects.filter(used=False)
+        index = random.randint(0, len(tasks)-1)
         task_object = tasks[index]
         task_object.used = True
         task_object.save()
